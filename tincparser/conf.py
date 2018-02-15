@@ -35,7 +35,6 @@ class TincConfFile(OrderedDict):
                 rsa_key.append(line)
                 if line.startswith(RSA_FOOTER):
                     parsing_rsa_key = False
-                    rsa_key.append('') # ensure there is a newline after the key
             else:
                 key, value = line.split('=')
                 items[key.strip()] = value.strip()
@@ -47,8 +46,7 @@ class TincConfFile(OrderedDict):
         for key, value in self.iteritems():
             lines.append('{} = {}'.format(key, value))
         if self.rsa_public_key:
-            lines.append('')
-            lines.append(self.rsa_public_key)
+            lines.extend(['', self.rsa_public_key, ''])
         return '\n'.join(lines)
 
     def _open(self):

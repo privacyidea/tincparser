@@ -17,8 +17,7 @@ i07L49Lu8Cf8a5iK/B1Wxd/6vQMvk4XX/DVxkxu79vnu+1D236n05pdKpedUlhC7
 rymC8994x9QiYC0hfz3bAbaufEOQw6VV/hXX7e1cXdxTOa/H2gV2FmvUBQC8LwiT
 d6PCRRkfkNV3iy6Je2M3DRFnIXUGvxqZvtYw1oqTSJ6GKeAO+pI59XCmMMGQcVtq
 rpXDmj21wrjv8Qk3XqqK2PoLwAt4ZuF5EFjLeImhIVQz3gQ90qmj9hcCAwEAAQ==
------END RSA PUBLIC KEY-----
-"""
+-----END RSA PUBLIC KEY-----"""
 
 
 class TestConf(unittest.TestCase):
