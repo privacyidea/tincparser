@@ -46,7 +46,9 @@ class TincConfFile(OrderedDict):
         for key, value in self.iteritems():
             lines.append('{} = {}'.format(key, value))
         if self.rsa_public_key:
-            lines.extend(['', self.rsa_public_key, ''])
+            lines.extend(['', self.rsa_public_key])
+        # Ensure newline at the end of file
+        lines.append('')
         return '\n'.join(lines)
 
     def _open(self):
