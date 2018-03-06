@@ -15,6 +15,12 @@ class IOHandler(object):
     def exists(self, filename):
         raise NotImplementedError()
 
+    def makedirs(self, dirname):
+        """
+        Recursively create a dictionary. Caveat: If the directory already exists, this does not throw an error!
+        """
+        raise NotImplementedError()
+
 
 class LocalIOHandler(IOHandler):
     def open(self, filename, mode):
@@ -22,6 +28,10 @@ class LocalIOHandler(IOHandler):
 
     def exists(self, filename):
         return os.path.exists(filename)
+
+    def makedirs(self, dirname):
+        if not os.path.isdir(dirname):
+            os.makedirs(dirname)
 
 
 class SFTPIOHandler(IOHandler):
@@ -41,3 +51,11 @@ class SFTPIOHandler(IOHandler):
             return True
         except IOError:
             return False
+
+    def makedirs(self, dirname):
+        try:
+            self.sftp.listdir(dirname)
+        except IOError:
+            parent_dirname, _ = os.path.split(dirname.rstrip('/'))
+            self.makedirs(parent_dirname)
+            self.sftp.mkdir(dirname)
