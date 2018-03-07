@@ -21,6 +21,9 @@ class IOHandler(object):
         """
         raise NotImplementedError()
 
+    def chmod(self, filename, mode):
+        raise NotImplementedError()
+
 
 class LocalIOHandler(IOHandler):
     def open(self, filename, mode):
@@ -32,6 +35,9 @@ class LocalIOHandler(IOHandler):
     def makedirs(self, dirname):
         if not os.path.isdir(dirname):
             os.makedirs(dirname)
+
+    def chmod(self, filename, mode):
+        os.chmod(filename, mode)
 
 
 class SFTPIOHandler(IOHandler):
@@ -59,3 +65,6 @@ class SFTPIOHandler(IOHandler):
             parent_dirname, _ = os.path.split(dirname.rstrip('/'))
             self.makedirs(parent_dirname)
             self.sftp.mkdir(dirname)
+
+    def chmod(self, filename, mode):
+        self.sftp.chmod(filename, mode)
