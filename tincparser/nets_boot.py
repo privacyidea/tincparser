@@ -27,6 +27,9 @@ class NetsBoot(object):
         if net not in self.lines:
             self.lines.append(net)
 
+    def remove(self, net):
+        self.lines.remove(net)
+
     @property
     def nets(self):
         """ Return all network names, i.e. all lines excluding blank lines and lines starting with '#' """
