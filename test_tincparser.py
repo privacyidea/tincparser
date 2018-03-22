@@ -26,6 +26,7 @@ class TestConf(unittest.TestCase):
         self.assertEqual(conf['Name'], 'pinode1')
         self.assertEqual(conf['Device'], '/dev/net/tun')
         self.assertEqual(conf.rsa_public_key, '')
+        self.assertEqual(conf.old_public_keys, [])
 
     def test_02_write(self):
         conf = TincConfFile(LocalIOHandler(), 'testdata/tinc.conf')
@@ -43,6 +44,7 @@ class TestConf(unittest.TestCase):
         conf = TincConfFile(LocalIOHandler(), 'testdata/hostfile')
         self.assertEqual(conf['Address'], '192.168.33.201')
         self.assertEqual(conf.rsa_public_key, RSA_PUBLIC_KEY)
+        self.assertEqual(conf.old_public_keys, [])
 
     def test_04_write_hostfile(self):
         conf = TincConfFile(LocalIOHandler(), 'testdata/hostfile')
@@ -73,6 +75,59 @@ class TestConf(unittest.TestCase):
             self.assertIn('Hello = World', contents)
             self.assertIn('Key2 = Value2', contents)
             self.assertIn(RSA_PUBLIC_KEY, contents)
+
+    def test_06_old_public_keys(self):
+        conf = TincConfFile(LocalIOHandler(), 'testdata/hostfile_with_old_key')
+        self.assertEqual(conf['Address'], '192.168.33.201')
+        self.assertEqual(conf['Subnet'], '172.20.1.1')
+        self.assertEqual(conf['Another'], 'Key')
+        self.assertEqual(conf.rsa_public_key, """-----BEGIN RSA PUBLIC KEY-----
+MIICCgKCAgEAzLzKCxbeBpekdY3Xi7eT0ryZUv+261aYUqWdZQCNMutOtyIgIbdq
+ttP2i9J4PirfwUiLQtTA6+3gfLpl0SYnZz/XdZS5tRMEmgZrBb572kUL/5hwbEdW
+JNF58Ca9YmlPc0P2rpaSs7nhDN/XtnYQJvET+uAk+Rs2pwCuJxW5odj7zeAYRHTu
+H2LX12Xb5alCqX4DZkrf9Eqyal0htRdQM/Oa3OvkRBeGezQCy7qxtANHyJVBFdOC
+/FAgoxEcDmAZPtW8A5yKO/2AaPiRfDISgSV8rJ9d/QBzg4jwxPD6+3Cn2ZfdIRdC
+YWfacFQ04rAdUjF3hD4/y7HIOyDkXVsdBkpUSGLtmUKKsqXaiREmjf6I9Geejj3P
+IjaT0JbeJQ0s6FcA9O0CFH9ezxXJSnLlLVTAsibpCfgxMFc4pA19NyK4bG1aqnk3
+ngDzn7Djwc6PPOwrhZjrjiM1lSdEkaCQwy8s7LaZbRViaJXFDg0pl/ZCdB2rW0wb
+ooNxX6bmyE5ENDBe1MDP6MUWRCG9aEn/DUxdN9jbNsejqveHd9//+ozXGXK/TGtR
+8Wn1ibUdZqAsUjKFhA4eVh9083AtmrAVbvTSJzx+EmikUn6zyGzIJydvf9DcIsRS
+bvHK/BneL4ITkO3dDjfl+G9chBkuqNXSS7V37FdRMCBQJLy4TK2l5zMCAwEAAQ==
+-----END RSA PUBLIC KEY-----""")
+        self.assertEqual(conf.old_public_keys, ["""-----BEGIN OLD PUBLIC KEY-----
+MIICCgKCAgEAob52Pto+hmEnVZHr5ti7MM8FFjj9A5ajuO/VoHGh6GlWVj1yOJcH
+bDq+0JTVeJ/p7Ar6Z5FqHVTghYl65sQ5kXLrVSd7T7njqCjhg+eXBXk7/XZuG74E
+keuHB7t5uvR8JVjPpryA49cB5AIKz4OXs08FgUz8CF2s2KmdWMiahBWlhEYMM5Q7
+Yo8sjmMXN7inepr/KSHdXFYEitIPjcLKyJfRBxPAUfKnqLI1IvUWzB0ZPNQS1nME
+OKoa9XvGaJcb6Qfe0UJqDj/61JCQ5uwspJUY9WUc36SoIDUeH+b1I1gWiTX65tlA
+n+Hn8eDojuHJqa7ByLSibHUxXNGXu1h43A8arkmXqTIjgI9cUf7gGWGRXkSwD7t1
+CAjjat1135evwXPE0fFzfUcAKqPc6oP2bORgcem7Fc9Osu1YkyJX9t15X1SBP3x/
+i07L49Lu8Cf8a5iK/B1Wxd/6vQMvk4XX/DVxkxu79vnu+1D236n05pdKpedUlhC7
+rymC8994x9QiYC0hfz3bAbaufEOQw6VV/hXX7e1cXdxTOa/H2gV2FmvUBQC8LwiT
+d6PCRRkfkNV3iy6Je2M3DRFnIXUGvxqZvtYw1oqTSJ6GKeAO+pI59XCmMMGQcVtq
+rpXDmj21wrjv8Qk3XqqK2PoLwAt4ZuF5EFjLeImhIVQz3gQ90qmj9hcCAwEAAQ==
+-----END OLD PUBLIC KEY-----""", """-----BEGIN OLD PUBLIC KEY-----
+ABCDEgKCAgEAob52Pto+hmEnVZHr5ti7MM8FFjj9A5ajuO/VoHGh6GlWVj1yOJcH
+bDq+0JTVeJ/p7Ar6Z5FqHVTghYl65sQ5kXLrVSd7T7njqCjhg+eXBXk7/XZuG74E
+keuHB7t5uvR8JVjPpryA49cB5AIKz4OXs08FgUz8CF2s2KmdWMiahBWlhEYMM5Q7
+Yo8sjmMXN7inepr/KSHdXFYEitIPjcLKyJfRBxPAUfKnqLI1IvUWzB0ZPNQS1nME
+OKoa9XvGaJcb6Qfe0UJqDj/61JCQ5uwspJUY9WUc36SoIDUeH+b1I1gWiTX65tlA
+n+Hn8eDojuHJqa7ByLSibHUxXNGXu1h43A8arkmXqTIjgI9cUf7gGWGRXkSwD7t1
+CAjjat1135evwXPE0fFzfUcAKqPc6oP2bORgcem7Fc9Osu1YkyJX9t15X1SBP3x/
+i07L49Lu8Cf8a5iK/B1Wxd/6vQMvk4XX/DVxkxu79vnu+1D236n05pdKpedUlhC7
+rymC8994x9QiYC0hfz3bAbaufEOQw6VV/hXX7e1cXdxTOa/H2gV2FmvUBQC8LwiT
+d6PCRRkfkNV3iy6Je2M3DRFnIXUGvxqZvtYw1oqTSJ6GKeAO+pI59XCmMMGQcVtq
+rpXDmj21wrjv8Qk3XqqK2PoLwAt4ZuF5EFjLeImhIVQz3gQ90qmj9hcCAwEAAQ==
+-----END OLD PUBLIC KEY-----"""])
+        conf['Bar'] = 'Cdr'
+        del conf.old_public_keys[0]
+        conf.save()
+        with open('testdata/hostfile_with_old_key', 'r') as f:
+            contents = f.read()
+            self.assertIn("Bar = Cdr", contents)
+            self.assertIn("-----BEGIN OLD PUBLIC KEY-----\nABCDEg", contents)
+            self.assertNotIn("-----BEGIN OLD PUBLIC KEY-----\nMIICCg", contents)
+
 
 class TestTincUp(unittest.TestCase):
     def test_01_read(self):
