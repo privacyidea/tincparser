@@ -1,6 +1,9 @@
+# -*- coding: utf-8 -*-
+
 from collections import OrderedDict
 
-from pyparsing import Word, alphanums, White, CharsNotIn, Optional, Literal, OneOrMore, pythonStyleComment, Group
+from pyparsing import (Word, alphanums, White, CharsNotIn, Optional, Literal, OneOrMore,
+                       pythonStyleComment, Group)
 
 FILE_HEADER = """# File parsed and saved by privacyidea.\n"""
 RSA_HEADER = '-----BEGIN RSA PUBLIC KEY-----'
@@ -23,13 +26,14 @@ class TincConfParser(object):
                          value).setResultsName("entries", True)
     base64word = Word(alphanums + '+/=')
     current_key = Group(Literal(RSA_HEADER) +
-                           OneOrMore(base64word) +
-                           Literal(RSA_FOOTER)).setResultsName("keys", True)
+                        OneOrMore(base64word) +
+                        Literal(RSA_FOOTER)).setResultsName("keys", True)
     old_key = Group(Literal(OLD_HEADER) +
                     OneOrMore(base64word) +
                     Literal(OLD_FOOTER)).setResultsName("old_keys", True)
 
     conf_file = OneOrMore(config_entry | current_key | old_key).ignore(pythonStyleComment)
+
 
 class TincConfFile(OrderedDict):
     """
@@ -61,7 +65,7 @@ class TincConfFile(OrderedDict):
 
     def _generate(self):
         lines = [FILE_HEADER]
-        for key, value in self.iteritems():
+        for key, value in self.items():
             lines.append('{} = {}'.format(key, value))
         for old_key in self.old_public_keys:
             lines.extend(['', old_key])
