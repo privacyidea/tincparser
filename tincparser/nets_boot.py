@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+
+
 class NetsBoot(object):
     """
     Extremely simple parser for /etc/tinc/nets.boot
@@ -32,7 +35,8 @@ class NetsBoot(object):
 
     @property
     def nets(self):
-        """ Return all network names, i.e. all lines excluding blank lines and lines starting with '#' """
+        """ Return all network names, i.e. all lines excluding blank lines
+        and lines starting with '#' """
         return [line for line in self.lines if line and not line.startswith('#')]
 
     def save(self):

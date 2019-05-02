@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import os
 
 
@@ -17,7 +19,8 @@ class IOHandler(object):
 
     def makedirs(self, dirname):
         """
-        Recursively create a dictionary. Caveat: If the directory already exists, this does not throw an error!
+        Recursively create a dictionary. Caveat: If the directory already exists,
+        this does not throw an error!
         """
         raise NotImplementedError()
 
