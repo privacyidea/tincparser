@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import six
 from collections import OrderedDict
 
 from pyparsing import (Word, alphanums, White, CharsNotIn, Optional, Literal, OneOrMore,
@@ -50,8 +51,14 @@ class TincConfFile(OrderedDict):
         self.old_public_keys = []
         self._open()
 
-    def _parse(self, f):
-        result = TincConfParser.conf_file.parseFile(f)
+    def _parse(self, content):
+        """
+        Parse the given content and save the results in this object.
+
+        :param content: The contents of the config file
+        :type content: str
+        """
+        result = TincConfParser.conf_file.parseString(to_unicode(content))
         for entry in result.get("entries", []):
             self[entry[0]] = entry[1]
         keys = result.get("keys", [])
@@ -81,8 +88,27 @@ class TincConfFile(OrderedDict):
         self.old_public_keys = []
         if self.io.exists(self.filename):
             with self.io.open(self.filename, 'r') as f:
-                self._parse(f)
+                self._parse(f.read())
 
     def save(self):
         with self.io.open(self.filename, 'w') as f:
             f.write(self._generate())
+
+
+def to_unicode(s, encoding="utf-8"):
+    """
+    Converts the string s to unicode if it is of type bytes.
+
+    :param s: the string to convert
+    :type s: bytes or str
+    :param encoding: the encoding to use (default utf8)
+    :type encoding: str
+    :return: unicode string
+    :rtype: str
+    """
+    if isinstance(s, six.text_type):
+        return s
+    elif isinstance(s, bytes):
+        return s.decode(encoding)
+    # TODO: warning? Exception?
+    return s
