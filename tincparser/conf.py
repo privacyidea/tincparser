@@ -51,8 +51,14 @@ class TincConfFile(OrderedDict):
         self.old_public_keys = []
         self._open()
 
-    def _parse(self, f):
-        result = TincConfParser.conf_file.parseString(to_unicode(f))
+    def _parse(self, content):
+        """
+        Parse the given content and save the results in this object.
+
+        :param content: The contents of the config file
+        :type content: str
+        """
+        result = TincConfParser.conf_file.parseString(to_unicode(content))
         for entry in result.get("entries", []):
             self[entry[0]] = entry[1]
         keys = result.get("keys", [])
